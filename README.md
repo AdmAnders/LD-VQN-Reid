@@ -36,7 +36,6 @@ Beyond Coarse Labels: A Large-Scale Multimodal Benchmark and Linguistically Driv
 └── README.md              
 ```
 
-[![Paper](https://img.shields.io/badge/Paper-Anonymous%20Submission-blue.svg)](link_to_pdf)
 [![Pytorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?e&logo=PyTorch&logoColor=white)](https://pytorch.org/)
 
 > **Note to Reviewers:** This repository is strictly anonymized for the double-blind review process of TPAMI. The full dataset (417K textual annotations) and pre-trained weights have been provided via anonymous Google Drive links to facilitate full reproducibility.
@@ -44,7 +43,7 @@ Beyond Coarse Labels: A Large-Scale Multimodal Benchmark and Linguistically Driv
 Official PyTorch implementation of **LD-VQN**, a novel cross-modal architecture for fine-grained Vehicle Re-Identification. We introduce the first large-scale multimodal benchmark featuring over 808,000 unconstrained natural language descriptions to resolve the "semantic bottleneck" in current Vision-Language Models (VLMs).
 
 ## 🚀 Highlights
-- **417K Multimodal Corpus:** We semantically enriched VeRi-776 and VehicleID datasets with high-density textual descriptions, bridging the gap between macroscopic shapes and instance-level primitives (e.g., custom decals, specific grille geometries).
+- **808K Multimodal Corpus:** We semantically enriched T2I-VeRi-776, T2I-VeRi-Wild and T2I-VehicleID datasets with high-density textual descriptions, bridging the gap between macroscopic shapes and instance-level primitives (e.g., custom decals, specific grille geometries).
 - **Multi-Lever Adapter (MLA):** Rescues early-stage textural primitives from the vision backbone before they homogenize.
 - **Dynamic Text-Conditioned Routing (D-TCR):** Dynamically infers spatial adjacency directly from text, routing specific linguistic tokens to exact geometric coordinates.
 - **Orthogonal Disentanglement Loss:** Mathematically forces latent semantic nodes toward a $\pi/2$ separation, strictly preventing attention collapse.
