@@ -1,11 +1,11 @@
 # =========================================================
-# EXPERIMENT CONFIGURATION: VeRi-776 Dataset
+# EXPERIMENT CONFIGURATION: T2I-VeRi-776 Dataset
 # Model: Linguistically Driven Visual Query Network (LD-VQN)
 # =========================================================
 
 DATA:
-  DATASET: "VeRi-776"
-  ROOT_DIR: "./data/VeRi"
+  DATASET: "T2I-VeRi-776"
+  ROOT_DIR: "./data/T2I-VeRi"
   TRAIN_JSONL: "./data/VeRi/image_train.jsonl"
   QUERY_JSONL: "./data/VeRi/image_query.jsonl"
   TEST_JSONL: "./data/VeRi/image_test.jsonl"
