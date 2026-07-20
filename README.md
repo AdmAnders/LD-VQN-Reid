@@ -1,34 +1,38 @@
 # LD-VQN-Reid
 Beyond Coarse Labels: A Large-Scale Multimodal Benchmark and Linguistically Driven for Vehicle Re-Identification (LD-VQN)
 ```bash
-├── configs/                     # Eğitim ve test konfigürasyonları (Hyperparameters)
+├── configs/                     # Training and testing configurations (Hyperparameters)
 │   ├── veri776_ldvqn.yml
 │   └── vehicleid_ldvqn.yml
-├── datasets/                    # Veri yükleyiciler ve 417K JSONL formatlı metin verileri
+│   └── veriwild_ldvqn.yml
+├── datasets/                    # Data loaders and 808K JSONL-formatted text data
 │   ├── build_dataloader.py
 │   ├── veri776_dataset.py
-│   └── vehicleid_dataset.py
-├── models/                      # LD-VQN mimarisi ve çekirdek modüller
-│   ├── ld_vqn.py                # Ana model (MLA + D-TCR birleşimi)
+│   ├── vehicleid_dataset.py
+│   ├── T2I-VeRi-Wild/           # T2I-VeRi-Wild Captions
+│   ├── T2I-VehicleID/           # T2I-VehicleID Captions
+│   └── T2I-VeRi-776/            # T2I-VeRi-776 Captions
+├── models/                      # LD-VQN architecture and core modules
+│   ├── ld_vqn.py                # Main model (combination of MLA and D-TCR)
 │   ├── mla.py                   # Multi-Level Adapter
 │   ├── d_tcr.py                 # Dynamic Text-Conditioned Routing
 │   ├── losses/                  # Ortogonal Disentanglement ve Triplet Loss
 │   │   ├── orthogonal_loss.py
 │   │   └── xbm_triplet.py
-│   └── text_encoders/           # DeBERTa entegrasyonu
-├── scripts/                     # Tek tıkla çalıştırma betikleri
+│   └── text_encoders/           # DeBERTa integration
+├── scripts/                     # One-click execution scripts
 │   ├── train_veri776.sh
 │   ├── eval_vehicleid.sh
 │   └── extract_attention.sh
-├── tools/                       # Görselleştirme araçları (Makaledeki figürler için)
-│   ├── visualize_attention.py   # Fig. 9: Cross-modal attention haritaları
-│   └── tsne_visualization.py    # Fig. 11: t-SNE kümeleme görselleştirmesi
-├── weights/                     # Pretrained model ağırlıklarının konulacağı dizin
-├── Dockerfile                   # Çevre kurulumu için kusursuz container
-├── environment.yml              # Conda kurulumu için
-├── requirements.txt             # Pip kurulumu için
-├── train.py                     # Ana eğitim döngüsü (Algorithm 1)
-├── test.py                      # Değerlendirme ve mAP/Rank hesaplama
+├── tools/                       # Visualization tools (for the figures in the article)
+│   ├── visualize_attention.py   # Fig. 9: Cross-modal attention maps
+│   └── tsne_visualization.py    # Fig. 11: t-SNE clustering visualization
+├── weights/                     # Index where pretrained model weights will be placed
+├── Dockerfile                   # The perfect container for environment setup.
+├── environment.yml              # For Conda 
+├── requirements.txt             # For Pip installation
+├── train.py                     # Main training loop (Algorithm 1)
+├── test.py                      # Evaluation and mAP/Rank calculation
 └── README.md              
 ```
 
