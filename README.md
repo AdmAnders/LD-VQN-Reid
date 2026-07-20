@@ -3,7 +3,7 @@ Beyond Coarse Labels: A Large-Scale Multimodal Benchmark and Linguistically Driv
 ```bash
 ├── configs/                     # Training and testing configurations (Hyperparameters)
 │   ├── veri776_ldvqn.yml
-│   └── vehicleid_ldvqn.yml
+│   ├── vehicleid_ldvqn.yml
 │   └── veriwild_ldvqn.yml
 ├── datasets/                    # Data loaders and 808K JSONL-formatted text data
 │   ├── build_dataloader.py
