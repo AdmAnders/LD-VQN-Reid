@@ -6,9 +6,9 @@
 DATA:
   DATASET: "T2I-VeRi-776"
   ROOT_DIR: "./data/T2I-VeRi"
-  TRAIN_JSONL: "./data/VeRi/image_train.jsonl"
-  QUERY_JSONL: "./data/VeRi/image_query.jsonl"
-  TEST_JSONL: "./data/VeRi/image_test.jsonl"
+  TRAIN_JSONL: "./data/T2I-VeRi/image_train.jsonl"
+  QUERY_JSONL: "./data/T2I-VeRi/image_query.jsonl"
+  TEST_JSONL: "./data/T2I-VeRi/image_test.jsonl"
   
   # Vision Preprocessing
   IMG_RESIZE: [350, 350]      # Initial resize before augmentation
