@@ -1,21 +1,21 @@
 # =========================================================
-# EXPERIMENT CONFIGURATION: VehicleID Dataset
+# EXPERIMENT CONFIGURATION: T2I-VehicleID Dataset
 # Model: Linguistically Driven Visual Query Network (LD-VQN)
 # =========================================================
 
 DATA:
-  DATASET: "VehicleID"
-  ROOT_DIR: "./data/VehicleID"
-  TRAIN_JSONL: "./data/VehicleID/train_list.jsonl"
+  DATASET: "T2I-VehicleID"
+  ROOT_DIR: "./data/T2I-VehicleID"
+  TRAIN_JSONL: "./data/T2I-VehicleID/train_list.jsonl"
   
   # Progressive Test Splits (Evaluating algorithmic degradation)
   TEST_SPLITS: 
-    - "./data/VehicleID/test_list_800.jsonl"
-    - "./data/VehicleID/test_list_1600.jsonl"
-    - "./data/VehicleID/test_list_2400.jsonl"
-    - "./data/VehicleID/test_list_3200.jsonl"
-    - "./data/VehicleID/test_list_6000.jsonl"
-    - "./data/VehicleID/test_list_13164.jsonl"
+    - "./data/T2I-VehicleID/test_list_800.jsonl"
+    - "./data/T2I-VehicleID/test_list_1600.jsonl"
+    - "./data/T2I-VehicleID/test_list_2400.jsonl"
+    - "./data/T2I-VehicleID/test_list_3200.jsonl"
+    - "./data/T2I-VehicleID/test_list_6000.jsonl"
+    - "./data/T2I-VehicleID/test_list_13164.jsonl"
   
   # Vision Preprocessing
   IMG_RESIZE: [350, 350]
