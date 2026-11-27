@@ -57,7 +57,7 @@ Official PyTorch implementation of **LD-VQN**, a novel cross-modal architecture 
 
 ## 🛠️ Environment Setup & Installation
 
-We provide both Conda and Docker setups to ensure 100% reproducibility. We have shared only T2I-VeRi-776 dataset captions because the file size is too much. To download the other dataset captions, please contact us via email at hidayetergin@hacettepe.edu.tr.
+We provide both Conda and Docker setups to ensure 100% reproducibility. We have shared only T2I-VeRi-776 dataset captions because the file size is too much. To download the other dataset captions and pretrained model weights, please contact us via email at hidayetergin@hacettepe.edu.tr.
 
 ### Option 1: Conda Environment (Recommended)
 ```bash
