@@ -3,6 +3,7 @@
 [![Paper](https://img.shields.io/badge/Neurocomputing-2027-blue)](https://doi.org/10.1016/j.neucom.2026.135646)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.15-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/Code-MIT-green)](LICENSE)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AdmAnders/LD-VQN-Reid/blob/main/notebooks/LD-VQN_Colab.ipynb)
 [![Captions: CC BY-NC 4.0](https://img.shields.io/badge/Captions-CC%20BY--NC%204.0-lightgrey)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 Official PyTorch implementation of
@@ -31,16 +32,35 @@ standard vehicle re-ID benchmarks (808K descriptions in total).
 
 ## Contents
 
-1. [Repository structure](#repository-structure)
-2. [Installation](#installation)
-3. [Data preparation](#data-preparation)
-4. [Pretrained weights](#pretrained-weights)
-5. [Evaluation](#evaluation)
-6. [Training](#training)
-7. [Visualization](#visualization)
-8. [Reproducibility notes](#reproducibility-notes)
-9. [Citation](#citation)
-10. [License](#license)
+1. [Quick start on Google Colab](#quick-start-on-google-colab)
+2. [Repository structure](#repository-structure)
+3. [Installation](#installation)
+4. [Data preparation](#data-preparation)
+5. [Pretrained weights](#pretrained-weights)
+6. [Evaluation](#evaluation)
+7. [Training](#training)
+8. [Visualization](#visualization)
+9. [Reproducibility notes](#reproducibility-notes)
+10. [Citation](#citation)
+11. [License](#license)
+
+## Quick start on Google Colab
+
+The easiest way to run LD-VQN is the Colab notebook
+[`notebooks/LD-VQN_Colab.ipynb`](notebooks/LD-VQN_Colab.ipynb)
+([open in Colab](https://colab.research.google.com/github/AdmAnders/LD-VQN-Reid/blob/main/notebooks/LD-VQN_Colab.ipynb)).
+It clones the repository, installs the pinned model/tokenizer packages, copies the images of one dataset from your
+Google Drive to the Colab disk and then lets you
+
+1. check the setup (`tools/check_setup.py`: caption counts, missing images, GPU memory),
+2. run a ~10-minute pipeline test on the real data,
+3. evaluate the released weights,
+4. train with checkpoints on Drive (re-running the notebook resumes an interrupted run),
+5. draw the attention maps and the t-SNE plot.
+
+You need a GPU runtime and the dataset archive (VeRi-776, VehicleID or VERI-Wild – see
+[Data preparation](#data-preparation)) in your Drive. The paper setting needs a large GPU (A100 80 GB / H100);
+on smaller GPUs set `LOW_MEMORY = True` in the notebook.
 
 ## Repository structure
 
@@ -67,15 +87,19 @@ standard vehicle re-ID benchmarks (808K descriptions in total).
 │   └── losses/
 │       ├── orthogonal_loss.py     # orthogonal disentanglement loss
 │       └── xbm_triplet.py         # cross-batch memory + batch-hard triplet loss
-├── utils/                         # config, seeding, k-reciprocal re-ranking, mAP/CMC
+├── utils/                         # config, seeding, environment report, k-reciprocal re-ranking, mAP/CMC
+├── notebooks/
+│   └── LD-VQN_Colab.ipynb         # Google Colab: setup, test, evaluation, training, figures
 ├── scripts/                       # train_*.sh, eval_*.sh, extract_attention.sh
 ├── tools/
+│   ├── check_setup.py             # pre-flight check of data, captions and GPU
 │   ├── visualize_attention.py     # Fig. 9: cross-modal attention maps
 │   └── tsne_visualization.py      # Fig. 11: t-SNE of the embedding space
 ├── weights/                       # put downloaded checkpoints here (see weights/README.md)
 ├── train.py                       # training loop (Algorithm 1)
 ├── test.py                        # evaluation (mAP / Rank-k)
-├── requirements.txt               # pinned pip dependencies
+├── requirements.txt               # pinned pip dependencies (local machines / Docker)
+├── requirements-colab.txt         # pinned model/tokenizer packages on top of Colab's torch
 ├── environment.yml                # conda environment
 ├── Dockerfile
 ├── CITATION.cff
@@ -85,6 +109,14 @@ standard vehicle re-ID benchmarks (808K descriptions in total).
 ## Installation
 
 Tested on Linux with Python 3.12 and an NVIDIA GPU. All versions are pinned in `requirements.txt`.
+
+> **Windows:** the PyPI `torch` wheel for Windows is CPU-only. Install the CUDA build of `torch==2.15.0` /
+> `torchvision==0.29.2` first with the command from <https://pytorch.org/get-started/locally/>, then
+> `pip install -r requirements.txt`. The `scripts/*.sh` files need bash; on Windows call `python train.py ...` /
+> `python test.py ...` directly.
+>
+> **IDEs (e.g. PyCharm):** set the working directory of every run configuration to the repository root – all paths
+> in the configs are relative to it.
 
 **Option 1 – conda**
 
@@ -118,6 +150,9 @@ The CLIP (`openai/clip-vit-large-patch14-336`) and DeBERTa (`microsoft/deberta-v
 from the Hugging Face Hub on first use (~2.1 GB).
 
 ## Data preparation
+
+Run `python tools/check_setup.py --config configs/<dataset>_ldvqn.yml` after preparing the data: it reports caption
+counts, identities, missing images and fallback captions per split.
 
 ### 1. Vehicle images (not distributed here)
 
@@ -181,7 +216,7 @@ into `weights/` and check their SHA256 sums (listed in [`weights/README.md`](wei
 
 | Dataset | Checkpoint | Test split | mAP | Rank-1 |
 |---|---|---|---|---|
-| T2I-VeRi-776 | `weights/ldvqn_veri776.pth` (epoch 60) | query / test |see paper | see paper |
+| T2I-VeRi-776 | `weights/ldvqn_veri776.pth` (epoch 60) | query / test | see paper | see paper |
 | T2I-VehicleID | `weights/ldvqn_vehicleid.pth` | 800 / 1600 / 2400 | see paper | see paper |
 | T2I-VeRi-Wild | `weights/ldvqn_veriwild.pth` | 3000 / 5000 / 10000 | see paper | see paper |
 
@@ -227,6 +262,10 @@ bash scripts/train_veriwild.sh
 - Any config value can be overridden from the command line:
   `python train.py --config configs/veri776_ldvqn.yml --opts SOLVER.EPOCHS 30 EXPERIMENT.OUTPUT_DIR outputs/run2`
 
+Batch-hard triplet mining and BatchNorm depend on the physical batch, and mixed precision changes the numerics,
+so results can differ from the paper. `SOLVER.MAX_ITERS_PER_EPOCH 20` truncates every epoch for a quick pipeline
+test.
+
 ## Visualization
 
 ```bash
@@ -247,6 +286,7 @@ python tools/tsne_visualization.py --config configs/veri776_ldvqn.yml \
   images are queries. By default the first image of the identity in the original `test_list_*.txt` order is used
   (`DATA.GALLERY_SELECTION: first`, deterministic); `random` picks it with `DATA.SPLIT_SEED`.
 
+
 ## Citation
 
 ```bibtex
@@ -263,11 +303,8 @@ python tools/tsne_visualization.py --config configs/veri776_ldvqn.yml \
 }
 ```
 
-Please also cite the original VeRi-776, VehicleID and VERI-Wild papers when you use the corresponding images.
-
 ## License
 
-- **Code:** MIT ([LICENSE](LICENSE)).
 - **Captions** (T2I-VeRi-776, T2I-VehicleID, T2I-VeRi-Wild): [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
 - **Images:** not included; governed by the licenses of the original datasets.
 
