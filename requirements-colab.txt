@@ -1,0 +1,7 @@
+# Google Colab: keep Colab's preinstalled torch / torchvision / numpy (CUDA builds matching the runtime)
+# and pin only the packages that define the model and tokenizer behaviour.
+# Full pinned environment for local machines: requirements.txt
+transformers==5.24.1
+tokenizers==0.23.3
+sentencepiece==0.2.3
+PyYAML==6.0.4

@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this code or the T2I captions, please cite the paper below."
+title: "A large-scale multimodal benchmark and linguistically driven network for vehicle re-identification"
+authors:
+  - family-names: Ergin
+    given-names: Hidayet
+  - family-names: Keçeli
+    given-names: Ali Seydi
+repository-code: "https://github.com/AdmAnders/LD-VQN-Reid"
+license: MIT
+preferred-citation:
+  type: article
+  title: "A large-scale multimodal benchmark and linguistically driven network for vehicle re-identification"
+  authors:
+    - family-names: Ergin
+      given-names: Hidayet
+    - family-names: Keçeli
+      given-names: Ali Seydi
+  journal: "Neurocomputing"
+  volume: 713
+  start: 135646
+  year: 2027
+  doi: "10.1016/j.neucom.2026.135646"
+  url: "https://www.sciencedirect.com/science/article/pii/S0925231226030444"

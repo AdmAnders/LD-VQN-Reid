@@ -1,0 +1,80 @@
+# =====================================================================
+# LD-VQN on T2I-VehicleID
+# Model / solver settings are shared with VeRi-776. If the paper used
+# different values for VehicleID, change them here.
+# The test split is selected with DATA.TEST_SIZE (800 / 1600 / 2400 /
+# 3200 / 6000 / 13164), e.g.
+#   python test.py --config configs/vehicleid_ldvqn.yml --weights ... --opts DATA.TEST_SIZE 1600
+# =====================================================================
+
+EXPERIMENT:
+  NAME: "vehicleid_ldvqn"
+  OUTPUT_DIR: "outputs/vehicleid"
+  SEED: 42
+  DETERMINISTIC: false
+
+DATA:
+  DATASET: "vehicleid"
+  IMAGE_ROOT: "data/VehicleID"                       # original PKU VehicleID (VehicleID_V1.0)
+  IMG_DIR: "image"                                   # data/VehicleID/image/0000001.jpg ...
+  SPLIT_DIR: "data/VehicleID/train_test_split"       # original identity lists (image_id vehicle_id)
+  CAPTION_DIR: "datasets/T2I-VehicleID"              # T2I-VehicleID caption JSONL files
+  TRAIN_JSONL: "train_list.jsonl"
+  TRAIN_SPLIT: "train_list.txt"
+  TEST_SIZE: 800
+  TEST_JSONL: "test_list_{size}.jsonl"
+  TEST_SPLIT: "test_list_{size}.txt"
+  # Query/gallery construction: for every identity, one image goes to the
+  # gallery and the rest are queries. "first" = first image of that identity
+  # in the original test list (deterministic); "random" = seeded random pick.
+  GALLERY_SELECTION: "first"
+  SPLIT_SEED: 0
+  IMG_SIZE: [336, 336]
+  TRAIN_RESIZE: [350, 350]
+  PIXEL_MEAN: [0.481, 0.457, 0.408]
+  PIXEL_STD: [0.268, 0.261, 0.275]
+  MAX_TOKEN_LEN: 128
+  DEFAULT_CAPTION: "A vehicle."
+
+DATALOADER:
+  BATCH_SIZE: 96
+  TEST_BATCH_SIZE: 96
+  NUM_INSTANCES: 4
+  NUM_WORKERS: 2
+  TEST_NUM_WORKERS: 0
+
+MODEL:
+  VISION_BACKBONE: "openai/clip-vit-large-patch14-336"
+  TEXT_BACKBONE: "microsoft/deberta-v3-base"
+  VISION_TRAINABLE_FROM: 18
+  TEXT_TRAINABLE_FROM: 9
+  CLIP_LAYERS: [5, 11, 17, 23]
+  Q_LAYERS: 4
+  NUM_COMPONENTS: 8
+  NUM_HEADS: 8
+
+SOLVER:
+  EPOCHS: 60
+  LR_PRETRAINED: 1.0e-6
+  LR_NEW: 1.0e-4
+  WEIGHT_DECAY: 1.0e-4
+  ACCUMULATION_STEPS: 4
+  GRAD_CLIP: 1.0
+  # --- optional, OFF in the paper setting ---
+  AMP: false                      # mixed precision (bf16 if supported, else fp16) to save GPU memory
+  MAX_ITERS_PER_EPOCH: 0          # >0: stop each epoch early (quick pipeline test only)
+
+LOSS:
+  LABEL_SMOOTHING: 0.1
+  TRIPLET_MARGIN: 0.3
+  XBM_MEMORY_SIZE: 5000
+  XBM_START_EPOCH: 5
+  USE_ORTHO: true
+  ORTHO_WEIGHT: 0.1
+
+TEST:
+  EVAL_PERIOD: 5
+  RERANKING: true
+  RERANK_K1: 20
+  RERANK_K2: 6
+  RERANK_LAMBDA: 0.3

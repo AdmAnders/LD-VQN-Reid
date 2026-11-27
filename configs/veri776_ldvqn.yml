@@ -1,0 +1,76 @@
+# =====================================================================
+# LD-VQN on T2I-VeRi-776
+# These values are the exact settings of the run reported in the paper
+# (mAP 78.26 %, Rank-1 98.39 % with k-reciprocal re-ranking, epoch 60).
+# Any key can be overridden from the command line, e.g.
+#   python train.py --config configs/veri776_ldvqn.yml --opts SOLVER.EPOCHS 10
+# =====================================================================
+
+EXPERIMENT:
+  NAME: "veri776_ldvqn"
+  OUTPUT_DIR: "outputs/veri776"   # checkpoints, best model and logs go here
+  SEED: 42
+  DETERMINISTIC: false            # true -> cuDNN deterministic mode (slower)
+
+DATA:
+  DATASET: "veri776"
+  IMAGE_ROOT: "data/VeRi"                  # original VeRi-776 images (see README)
+  CAPTION_DIR: "datasets/T2I-VeRi-776"     # T2I-VeRi-776 caption JSONL files
+  TRAIN:
+    IMG_DIR: "image_train"
+    JSONL: "image_train.jsonl"
+  QUERY:
+    IMG_DIR: "image_query"
+    JSONL: "image_query.jsonl"
+  GALLERY:
+    IMG_DIR: "image_test"
+    JSONL: "image_test.jsonl"
+  IMG_SIZE: [336, 336]
+  TRAIN_RESIZE: [350, 350]        # resize -> random crop to IMG_SIZE
+  PIXEL_MEAN: [0.481, 0.457, 0.408]
+  PIXEL_STD: [0.268, 0.261, 0.275]
+  MAX_TOKEN_LEN: 128
+  DEFAULT_CAPTION: "A vehicle."   # used when a JSONL line has no "caption"
+
+DATALOADER:
+  BATCH_SIZE: 96                  # physical batch size (P x K = 24 x 4)
+  TEST_BATCH_SIZE: 96
+  NUM_INSTANCES: 4                # K: images per identity in a batch
+  NUM_WORKERS: 2
+  TEST_NUM_WORKERS: 0
+
+MODEL:
+  VISION_BACKBONE: "openai/clip-vit-large-patch14-336"
+  TEXT_BACKBONE: "microsoft/deberta-v3-base"
+  VISION_TRAINABLE_FROM: 18       # ViT-L/14 layers 18-23 + post_layernorm are trainable
+  TEXT_TRAINABLE_FROM: 9          # DeBERTa layers 9-11 are trainable
+  CLIP_LAYERS: [5, 11, 17, 23]    # MLA anchor layers (hidden_states indices)
+  Q_LAYERS: 4                     # number of stacked D-TCR blocks
+  NUM_COMPONENTS: 8               # latent semantic nodes per D-TCR block
+  NUM_HEADS: 8
+
+SOLVER:
+  EPOCHS: 60
+  LR_PRETRAINED: 1.0e-6           # CLIP + DeBERTa parameters
+  LR_NEW: 1.0e-4                  # MLA, D-TCR, projection, BN, classifier
+  WEIGHT_DECAY: 1.0e-4
+  ACCUMULATION_STEPS: 4           # effective batch = 96 x 4 = 384
+  GRAD_CLIP: 1.0
+  # --- optional, OFF in the paper setting ---
+  AMP: false                      # mixed precision (bf16 if supported, else fp16) to save GPU memory
+  MAX_ITERS_PER_EPOCH: 0          # >0: stop each epoch early (quick pipeline test only)
+
+LOSS:
+  LABEL_SMOOTHING: 0.1
+  TRIPLET_MARGIN: 0.3
+  XBM_MEMORY_SIZE: 5000
+  XBM_START_EPOCH: 5              # XBM negatives are used when epoch index (0-based) > 5
+  USE_ORTHO: true                 # orthogonal disentanglement loss (USE_TCR in the notebook)
+  ORTHO_WEIGHT: 0.1
+
+TEST:
+  EVAL_PERIOD: 5                  # evaluate every 5 epochs, keep the best mAP
+  RERANKING: true
+  RERANK_K1: 20
+  RERANK_K2: 6
+  RERANK_LAMBDA: 0.3
