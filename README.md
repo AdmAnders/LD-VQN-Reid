@@ -65,3 +65,18 @@ git clone [https://github.com/LDVQN-Paper/LD-VQN.git](https://github.com/LDVQN-P
 cd LD-VQN
 conda env create -f environment.yml
 conda activate ldvqn_env
+```
+### Cite this paper via:
+```bash
+@article{ERGIN2027135646,
+title = {A large-scale multimodal benchmark and linguistically driven network for vehicle re-identification},
+journal = {Neurocomputing},
+volume = {713},
+pages = {135646},
+year = {2027},
+issn = {0925-2312},
+doi = {https://doi.org/10.1016/j.neucom.2026.135646},
+url = {https://www.sciencedirect.com/science/article/pii/S0925231226030444},
+author = {Hidayet Ergin and Ali Seydi Keçeli},
+}
+```
