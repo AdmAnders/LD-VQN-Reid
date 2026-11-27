@@ -181,7 +181,7 @@ into `weights/` and check their SHA256 sums (listed in [`weights/README.md`](wei
 
 | Dataset | Checkpoint | Test split | mAP | Rank-1 |
 |---|---|---|---|---|
-| T2I-VeRi-776 | `weights/ldvqn_veri776.pth` (epoch 60) | query / test | **78.26** | **98.39** |
+| T2I-VeRi-776 | `weights/ldvqn_veri776.pth` (epoch 60) | query / test |see paper | see paper |
 | T2I-VehicleID | `weights/ldvqn_vehicleid.pth` | 800 / 1600 / 2400 | see paper | see paper |
 | T2I-VeRi-Wild | `weights/ldvqn_veriwild.pth` | 3000 / 5000 / 10000 | see paper | see paper |
 
@@ -191,7 +191,7 @@ All numbers use k-reciprocal re-ranking and the evaluation protocol described in
 ## Evaluation
 
 ```bash
-# VeRi-776 – should print mAP 78.26 % / Rank-1 98.39 % with the released checkpoint
+# VeRi-776 – image_test and image_query
 bash scripts/eval_veri776.sh weights/ldvqn_veri776.pth
 
 # VehicleID – 800 / 1600 / 2400 test splits
@@ -227,21 +227,6 @@ bash scripts/train_veriwild.sh
 - Any config value can be overridden from the command line:
   `python train.py --config configs/veri776_ldvqn.yml --opts SOLVER.EPOCHS 30 EXPERIMENT.OUTPUT_DIR outputs/run2`
 
-Main settings (identical for all three configs; see the YAML files):
-
-| | |
-|---|---|
-| Vision backbone | CLIP ViT-L/14 @ 336 px, layers 18–23 + final LayerNorm fine-tuned |
-| Text backbone | DeBERTa-v3-base, layers 9–11 fine-tuned, max. 128 tokens |
-| LD-VQN | MLA on layers 5/11/17/23, 4 D-TCR blocks, 8 component nodes, 8 heads, GeM + BNNeck |
-| Batch | 96 (24 identities × 4 images), gradient accumulation 4 → effective 384 |
-| Optimizer | AdamW, lr 1e-6 (backbones) / 1e-4 (new layers), weight decay 1e-4, cosine schedule, 60 epochs, grad-clip 1.0 |
-| Losses | CE (label smoothing 0.1) + batch-hard triplet (margin 0.3, XBM memory 5000 from epoch 7) + 0.1 × orthogonal loss |
-| Augmentation | resize 350 → random crop 336, horizontal flip |
-
-**Hardware.** The reported VeRi-776 model was trained on a single **TODO: GPU model** GPU in fp32;
-one epoch takes ≈ 23 min, the full 60-epoch run ≈ 24 h including evaluation.
-
 ## Visualization
 
 ```bash
@@ -258,24 +243,9 @@ python tools/tsne_visualization.py --config configs/veri776_ldvqn.yml \
 
 - **Captions are used at test time.** Every query and gallery image is encoded together with its caption; the
   model cannot be evaluated on images alone.
-- **Evaluation protocol.** Query and gallery features are L2-normalised; mAP and CMC are computed over the gallery
-  after removing only the entry with the *same file name* as the query. Same-identity images from the same camera are
-  **not** removed. This is the protocol used for all numbers in the paper.
 - **VehicleID query/gallery.** For each identity of a test list, one image is put in the gallery and the remaining
   images are queries. By default the first image of the identity in the original `test_list_*.txt` order is used
   (`DATA.GALLERY_SELECTION: first`, deterministic); `random` picks it with `DATA.SPLIT_SEED`.
-- **Model selection.** As in the paper, the model is evaluated on the test split every 5 epochs and the checkpoint
-  with the highest mAP is kept as `ldvqn_best.pth`. For VeRi-776 this was the final epoch (60).
-- **Seeding.** `EXPERIMENT.SEED` seeds Python, NumPy, PyTorch and the data-loader workers. The original run was not
-  seeded, so a retrained model should match the paper within normal run-to-run variance rather than bit-for-bit.
-  `EXPERIMENT.DETERMINISTIC: true` additionally enables deterministic cuDNN kernels (slower).
-- **Fallback captions.** Some entries of the caption files carry the fallback text `"A vehicle."`; these entries
-  are kept unchanged because they were used in training and evaluation.
-- **Re-ranking memory.** k-reciprocal re-ranking builds dense `(query + gallery)²` matrices. This is fine for
-  VeRi-776 and VehicleID, but the VeRi-Wild 5000 / 10000 splits need tens of GB of RAM; use `--no_rerank` if you run
-  out of memory.
-- **Missing images** are replaced by a black image (as in the original code); a warning with the number of missing
-  files is printed when the data loaders are built – check it before training.
 
 ## Citation
 
